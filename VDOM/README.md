@@ -1,4 +1,4 @@
-代码来源[参考](https://segmentfault.com/a/1190000007334535#articleHeader3)<br/>
+[代码来源](https://segmentfault.com/a/1190000007334535#articleHeader3)<br/>
 在创建Vue实例时，对指定的html元素render时记录下来render使用到的data属性，
 然后将该render加入此属性的更新依赖中。因此在data属性更新时，如果影响了展示
 效果，则会执行render。<br/>
