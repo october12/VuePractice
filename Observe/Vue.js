@@ -1,27 +1,44 @@
-class Vue {
-  constructor(options) {
-	this.$options = options
-	this._data = options.data
-	observer(options.data, this._update)
-	this._update
+'use strict'
+import Watcher from './watcher'
+import {observe} from "./observer"
+
+export default class Vue {
+  constructor (options={}) {
+    //这里简化了。。其实要merge
+    this.$options=options
+    //这里简化了。。其实要区分的
+    let data = this._data=this.$options.data
+    Object.keys(data).forEach(key=>this._proxy(key))
+    observe(data,this)
   }
-  _update() {
-	this.$options.render()
+
+
+  $watch(expOrFn, cb, options){
+    new Watcher(this, expOrFn, cb)
   }
-}
-function observer(value, cb){
-	Object.keys(value).forEach((key) => defineReactive(value, key, value[key], cb))
+
+  _proxy(key) {
+    var self = this
+    Object.defineProperty(self, key, {
+      configurable: true,
+      enumerable: true,
+      get: function proxyGetter () {
+        return self._data[key]
+      },
+      set: function proxySetter (val) {
+        self._data[key] = val
+      }
+    })
+  }
 }
 
-function defineReactive(obj, key, val, cb) {
-	Object.defineProperty(obj, key, {
-		enumberable: true,
-		configurable: true,
-		get: ()=>{},
-		set: newVal=>{
-			cb()
-		}
-	})
-}
-
-modules.exports = Vue
+const v = new Vue({
+  data:{
+    a:1,
+    b:2
+  }
+})
+v.$watch("a",()=>console.log("哈哈，$watch成功"))
+setTimeout(()=>{
+  v.a = 5
+},2000) 
